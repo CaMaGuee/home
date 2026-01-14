@@ -287,6 +287,7 @@ a {
     </div>
 
     <div  class="g_id_signin"
+          id ="g_Login_Btn"
           data-type="standard"
           data-size="large"
           data-theme="outline"
@@ -457,6 +458,11 @@ async function loadFromSheets() {
   weekendSubHolidays.splice(0, weekendSubHolidays.length, ...data.weekendSubHolidays);
   usedHolidays.splice(0, usedHolidays.length, ...data.usedHolidays);
   usedSubHolidays.splice(0, usedSubHolidays.length, ...data.usedSubHolidays);
+
+  let login = getElementById("g_Login_Btn");
+  if(login !== null){
+    login.style.display = none;
+  }
 
   refreshLists();
   refreshUsedLists();
