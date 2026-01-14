@@ -532,8 +532,11 @@ async function saveToSheets() {
     });
 
     const json = await res.json();
+
+    console.log("API 응답:", json);
+
     if (!json.success) {
-      console.error("저장 실패:", json.error);
+      console.error("저장 실패:", json.error || "알 수 없는 오류");
     } else {
       console.log("저장 완료");
     }
