@@ -438,20 +438,20 @@ a {
 let currentUser = null;
 
 function handleCredentialResponse(response) {
-  const payload = JSON.parse(
-    atob(response.credential.split('.')[1])
-  );
-
+  const payload = JSON.parse(atob(response.credential.split('.')[1]));
   currentUser = payload.email;
-  console.log("로그인 사용자:", currentUser);
 
-  loadFromSheets(); // 로그인 후 데이터 불러오기
+  console.log("로그인 사용자(이메일) : ", currentUser);
+
+  loadFromSheets(); // 로그인 이후에만 호출
 }
 
-const API_URL = "https://script.google.com/macros/s/AKfycbxm8Pwj2A6U9DZUuqeV_04Ql5j6rBQQ6EW1HrheFkv062BlZ8wVFi9SQmttnmb-OvbEPQ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzTDoE7VFp3BIv9pfJ60aN6NyBFA_mglHDk9zllMo7A4PDEtcs1LIyYgU8a7ZznQ2sL9Q/exec";
 
 async function loadFromSheets() {
-  const res = await fetch(API_URL);
+  if (!currentUser) return;
+
+  const res = await fetch(`${API_URL}?userId=${encodeURIComponent(currentUser)}`);
   const data = await res.json();
 
   annualOccurrences.splice(0, annualOccurrences.length, ...data.annualOccurrences);
@@ -459,20 +459,18 @@ async function loadFromSheets() {
   usedHolidays.splice(0, usedHolidays.length, ...data.usedHolidays);
   usedSubHolidays.splice(0, usedSubHolidays.length, ...data.usedSubHolidays);
 
-  let login = getElementById("g_Login_Btn");
-  if(login !== null){
-    login.style.display = none;
-  }
-
   refreshLists();
   refreshUsedLists();
 }
 
 async function saveToSheets() {
+  if (!currentUser) return;
+
   await fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
+      userId: currentUser,
       annualOccurrences,
       weekendSubHolidays,
       usedHolidays,
@@ -726,12 +724,6 @@ document.getElementById('modalCancel').onclick = ()=>document.getElementById('ho
 document.querySelectorAll('input[type="date"]').forEach(el => {
   el.value = new Date().toISOString().split('T')[0];
 });
-</script>
-
-<script>
-  window.onload = () => {
-    loadFromSheets();
-  };
 </script>
 </body>
 </html>
