@@ -517,7 +517,7 @@ async function saveToSheets() {
   if (!currentUser) return;
 
   try {
-    const res = await fetch(`${API_URL}/save`, {
+    const res = await fetch(`${API_BASE}/save`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
