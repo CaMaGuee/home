@@ -464,35 +464,67 @@ async function loadFromSheets(userEmail) {
     );
 
     if (!res.ok) {
-      throw new Error(`HTTP 오류: ${res.status}`);
+      throw new Error(`HTTP 오류: ${res.status} - ${res.statusText}`);
     }
 
-    const json = await res.json();
-    const data = json.rows?.[0] || {};  // ← 여기서 실제 데이터 객체 꺼내기
+    const data = await res.json();
 
-    // 기존 데이터 초기화
+    // 기존 배열들 초기화
     annualOccurrences.length = 0;
     weekendSubHolidays.length = 0;
     usedHolidays.length = 0;
     usedSubHolidays.length = 0;
 
-    // 서버에서 온 객체 그대로 사용 (이미 배열 형태)
-    (data.annualOccurrences || []).forEach(v => annualOccurrences.push(v));
-    (data.weekendSubHolidays || []).forEach(v => weekendSubHolidays.push(v));
-    (data.usedHolidays || []).forEach(v => usedHolidays.push(v));
-    (data.usedSubHolidays || []).forEach(v => usedSubHolidays.push(v));
+    // 서버에서 바로 받은 객체의 배열들을 그대로 푸시
+    (data.annualOccurrences || []).forEach(item => {
+      annualOccurrences.push({
+        id: Number(item.id),
+        date: item.date,
+        remaining: Number(item.remaining)
+      });
+    });
 
+    (data.weekendSubHolidays || []).forEach(item => {
+      weekendSubHolidays.push({
+        date: item.date,
+        weekday: item.weekday
+      });
+    });
+
+    (data.usedHolidays || []).forEach(item => {
+      usedHolidays.push({
+        date: item.date,
+        weekday: item.weekday,
+        amount: Number(item.amount)
+      });
+    });
+
+    (data.usedSubHolidays || []).forEach(item => {
+      usedSubHolidays.push({
+        date: item.date,
+        weekday: item.weekday
+      });
+    });
+
+    // 연차 ID 카운터 업데이트 (가장 큰 id + 1)
+    if (annualOccurrences.length > 0) {
+      const maxId = Math.max(...annualOccurrences.map(item => item.id || 0));
+      annIdCounter = maxId + 1;
+    }
+
+    // UI 갱신
     refreshUsedLists();
     refreshLists();
 
-    console.log("시트 데이터 로드 완료");
+    console.log("✅ 시트에서 데이터 로드 완료");
     console.log("연차 발생:", annualOccurrences);
     console.log("추가 대체휴가:", weekendSubHolidays);
     console.log("사용 연차:", usedHolidays);
     console.log("사용 대체휴가:", usedSubHolidays);
 
   } catch (err) {
-    console.error("Sheets load 실패:", err);
+    console.error("❌ Sheets 데이터 로드 실패:", err);
+    alert("데이터를 불러오지 못했습니다.\n인터넷 연결이나 서버 상태를 확인해주세요.");
   }
 }
 
