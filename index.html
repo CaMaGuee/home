@@ -441,12 +441,12 @@ function handleCredentialResponse(response) {
   const payload = JSON.parse(atob(response.credential.split('.')[1]));
   currentUser = payload.email;
 
-  console.log("로그인 사용자(이메일) : ", currentUser);
+  console.log("로그인 사용자 : ", currentUser);
 
   loadFromSheets(); // 로그인 이후에만 호출
 }
 
-const API_URL = "https://script.google.com/macros/s/AKfycbzTDoE7VFp3BIv9pfJ60aN6NyBFA_mglHDk9zllMo7A4PDEtcs1LIyYgU8a7ZznQ2sL9Q/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwn3rpAlK3GVLrEe3awxLlRJELdgWpl26k_QnBPNPr1uWDiqG-xnXy1dadyL2EsdxetJg/exec";
 
 async function loadFromSheets() {
   if (!currentUser) return;
