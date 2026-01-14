@@ -583,6 +583,7 @@ async function saveToSheets() {
 </script>
 
 <script>
+let firstScan = 0;
 let annIdCounter = 1;
 const annualOccurrences = [];
 const weekendSubHolidays = [];
@@ -621,6 +622,10 @@ function refreshLists(){
   document.getElementById('remainingSub').innerText = remainingSub;
   
   updateDonutGauge();
+  if(firstScan != 1){
+    firstScan++;
+    return;
+  }
   saveToSheets();
 }
 
