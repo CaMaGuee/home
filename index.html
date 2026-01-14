@@ -451,7 +451,7 @@ function handleCredentialResponse(response) {
 const API_URL = "https://script.google.com/macros/s/AKfycbxm8Pwj2A6U9DZUuqeV_04Ql5j6rBQQ6EW1HrheFkv062BlZ8wVFi9SQmttnmb-OvbEPQ/exec";
 
 async function loadFromSheets() {
-  const res = await fetch(API_URL, { credentials: "include" });
+  const res = await fetch(API_URL);
   const data = await res.json();
 
   annualOccurrences.splice(0, annualOccurrences.length, ...data.annualOccurrences);
@@ -471,7 +471,6 @@ async function loadFromSheets() {
 async function saveToSheets() {
   await fetch(API_URL, {
     method: "POST",
-    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       annualOccurrences,
