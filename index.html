@@ -451,6 +451,9 @@ const API_URL = "https://script.google.com/macros/s/AKfycbzTDoE7VFp3BIv9pfJ60aN6
 async function loadFromSheets() {
   if (!currentUser) return;
 
+  let login = document.getElementById("g_Login_Btn");
+  login.style.display = "none";
+
   const res = await fetch(`${API_URL}?userId=${encodeURIComponent(currentUser)}`);
   const data = await res.json();
 
