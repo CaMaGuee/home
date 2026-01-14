@@ -501,16 +501,17 @@ async function loadFromSheets(userEmail) {
       wsh.forEach(v => weekendSubHolidays.push(v));
       uh.forEach(v => usedHolidays.push(v));
       ush.forEach(v => usedSubHolidays.push(v));
+
+      console.log(ao);
+      console.log(wsh);
+      console.log(uh);
+      console.log(ush);
     }
 
     refreshUsedLists();
     refreshLists();
 
     console.log("시트 데이터 로드 완료");
-    console.log(ao);
-    console.log(wsh);
-    console.log(uh);
-    console.log(ush);
   } catch (err) {
     console.error("Sheets load 실패:", err);
   }
