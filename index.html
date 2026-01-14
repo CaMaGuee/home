@@ -441,7 +441,7 @@ function handleCredentialResponse(response) {
   const payload = JSON.parse(atob(response.credential.split(".")[1]));
   const userEmail = payload.email;
 
-  console.log("로그인 사용자:", userEmail);
+  console.log("로그인 사용자(Email):", userEmail);
 
   currentUser = userEmail;
 
@@ -517,37 +517,28 @@ async function saveToSheets() {
   if (!currentUser) return;
 
   try {
-    const res = await fetch(`${API_BASE}/save`, {
+    const res = await fetch(`${API_URL}/save`, {
       method: "POST",
-      mode: "cors",
-      credentials: "omit",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         userId: currentUser,
         annualOccurrences,
         weekendSubHolidays,
         usedHolidays,
-        usedSubHolidays
-      })
+        usedSubHolidays,
+      }),
     });
 
-    if (!res.ok) {
-      throw new Error("HTTP 오류: " + res.status);
-    }
-
     const json = await res.json();
-
     if (!json.success) {
       console.error("저장 실패:", json.error);
-      return;
+    } else {
+      console.log("저장 완료");
     }
-
-    console.log("시트 저장 완료");
-
   } catch (err) {
-    console.error("Sheets save 실패:", err);
+    console.error("저장 실패:", err);
   }
 }
 
