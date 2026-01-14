@@ -441,7 +441,7 @@ function handleCredentialResponse(response) {
   const payload = JSON.parse(atob(response.credential.split(".")[1]));
   const userEmail = payload.email;
 
-  console.log("로그인 사용자(Email):", userEmail);
+  console.log("로그인 사용자:", userEmail);
 
   currentUser = userEmail;
 
