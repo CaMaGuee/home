@@ -451,12 +451,12 @@ function handleCredentialResponse(response) {
 }
 
 
-const API_URL = "https://script.google.com/macros/s/AKfycbwqj5d2WJkGt3D971dDt8mkUv1lcaILD25T6_wAJd-7npESQo3ppZs6XpR4rRXfZzVySQ/exec";
+const API_URL = "google-sheet-api-orpin.vercel.app";
 
 async function loadFromSheets(userEmail) {
   try {
     const res = await fetch(
-      API_URL + "?userId=" + encodeURIComponent(userEmail),
+      `${API_BASE}/load?userId=${encodeURIComponent(userEmail)}`,
       {
         method: "GET",
         mode: "cors",
@@ -469,12 +469,9 @@ async function loadFromSheets(userEmail) {
     }
 
     const json = await res.json();
-    if (!json.ok) {
-      console.error("서버 오류:", json.error);
-      return;
-    }
 
-    const data = json.data;
+    // 서버 응답 구조: { rows: [...] }
+    const rows = json.rows || [];
 
     // 기존 데이터 초기화
     annualOccurrences.length = 0;
@@ -482,17 +479,38 @@ async function loadFromSheets(userEmail) {
     usedHolidays.length = 0;
     usedSubHolidays.length = 0;
 
-    data.annualOccurrences?.forEach(v => annualOccurrences.push(v));
-    data.weekendSubHolidays?.forEach(v => weekendSubHolidays.push(v));
-    data.usedHolidays?.forEach(v => usedHolidays.push(v));
-    data.usedSubHolidays?.forEach(v => usedSubHolidays.push(v));
+    /*
+      save.js에서 저장한 구조:
+      [
+        userId,
+        annualOccurrences(JSON),
+        weekendSubHolidays(JSON),
+        usedHolidays(JSON),
+        usedSubHolidays(JSON)
+      ]
+    */
+
+    if (rows.length > 0) {
+      const row = rows[0];
+
+      const ao = JSON.parse(row[1] || "[]");
+      const wsh = JSON.parse(row[2] || "[]");
+      const uh = JSON.parse(row[3] || "[]");
+      const ush = JSON.parse(row[4] || "[]");
+
+      ao.forEach(v => annualOccurrences.push(v));
+      wsh.forEach(v => weekendSubHolidays.push(v));
+      uh.forEach(v => usedHolidays.push(v));
+      ush.forEach(v => usedSubHolidays.push(v));
+    }
 
     refreshUsedLists();
     refreshLists();
 
-    console.log("시트 데이터 로드 완료", data);
+    console.log("시트 데이터 로드 완료");
+
   } catch (err) {
-    console.error("Sheets fetch 실패:", err);
+    console.error("Sheets load 실패:", err);
   }
 }
 
@@ -500,11 +518,13 @@ async function saveToSheets() {
   if (!currentUser) return;
 
   try {
-    const res = await fetch(API_URL, {
+    const res = await fetch(`${API_BASE}/save`, {
       method: "POST",
       mode: "cors",
-      credentials: "omit", // ★ 중요
-      headers: { "Content-Type": "application/json" },
+      credentials: "omit",
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({
         userId: currentUser,
         annualOccurrences,
@@ -514,12 +534,21 @@ async function saveToSheets() {
       })
     });
 
-    const json = await res.json();
-    if (!json.ok) {
-      console.error("저장 실패:", json.error);
+    if (!res.ok) {
+      throw new Error("HTTP 오류: " + res.status);
     }
+
+    const json = await res.json();
+
+    if (!json.success) {
+      console.error("저장 실패:", json.error);
+      return;
+    }
+
+    console.log("시트 저장 완료");
+
   } catch (err) {
-    console.error("저장 fetch 오류:", err);
+    console.error("Sheets save 실패:", err);
   }
 }
 
