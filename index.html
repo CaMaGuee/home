@@ -499,18 +499,30 @@ async function loadFromSheets(userEmail) {
 async function saveToSheets() {
   if (!currentUser) return;
 
-  await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      userId: currentUser,
-      annualOccurrences,
-      weekendSubHolidays,
-      usedHolidays,
-      usedSubHolidays
-    })
-  });
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      mode: "cors",
+      credentials: "omit", // ★ 중요
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: currentUser,
+        annualOccurrences,
+        weekendSubHolidays,
+        usedHolidays,
+        usedSubHolidays
+      })
+    });
+
+    const json = await res.json();
+    if (!json.ok) {
+      console.error("저장 실패:", json.error);
+    }
+  } catch (err) {
+    console.error("저장 fetch 오류:", err);
+  }
 }
+
 </script>
 
 <script>
