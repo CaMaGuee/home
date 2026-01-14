@@ -273,11 +273,6 @@ a {
 }
 
 </style>
-<script>
-  userName = ""
-  userEmail = ""
-  userImage = ""
-</script>
 </head>
 <body>
 
@@ -303,7 +298,7 @@ a {
 
   <div class="notice-bar">
     <div class="notice-track">
-      <span>[속보] 김찬솔 사원 주식 폭망</span>
+      <span>[공지] 구글 로그인으로 데이터 자동 기록 업데이트 2026.01.14</span>
     </div>
   </div>
 
@@ -480,8 +475,8 @@ async function saveToSheets() {
     })
   });
 }
-
 </script>
+
 <script>
 let annIdCounter = 1;
 const annualOccurrences = [];
@@ -521,6 +516,7 @@ function refreshLists(){
   document.getElementById('remainingSub').innerText = remainingSub;
   
   updateDonutGauge();
+  saveToSheets();
 }
 
 function updateDonutGauge(){
@@ -725,6 +721,12 @@ document.getElementById('modalCancel').onclick = ()=>document.getElementById('ho
 document.querySelectorAll('input[type="date"]').forEach(el => {
   el.value = new Date().toISOString().split('T')[0];
 });
+</script>
+
+<script>
+  window.onload = () => {
+    loadFromSheets();
+  };
 </script>
 </body>
 </html>
