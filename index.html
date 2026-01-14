@@ -443,32 +443,57 @@ function handleCredentialResponse(response) {
 
   console.log("로그인 사용자(이메일):", userEmail);
 
-  loadFromSheetsViaIframe(userEmail);
+  currentUser = userEmail;
+
+  document.getElementById("g_Login_Btn").style.display = "none";
+
+  loadFromSheets(currentUser);
 }
 
-const API_URL = "https://script.google.com/macros/s/AKfycbyBMUmSy6O2UHqhtNC5VCb1b2vjHcl2VzSRvm7BceewaDsDsfwkrnfdNuD1sTfkRq3EMQ/exec";
 
-function loadFromSheetsViaIframe(userEmail) {
-  const iframe = document.createElement("iframe");
+const API_URL = "https://script.google.com/macros/s/AKfycbwqj5d2WJkGt3D971dDt8mkUv1lcaILD25T6_wAJd-7npESQo3ppZs6XpR4rRXfZzVySQ/exec";
 
-  iframe.src = API_URL + "?userId=" + encodeURIComponent(userEmail);
-  iframe.style.display = "none";
+async function loadFromSheets(userEmail) {
+  try {
+    const res = await fetch(
+      API_URL + "?userId=" + encodeURIComponent(userEmail),
+      {
+        method: "GET",
+        mode: "cors",
+        credentials: "omit"
+      }
+    );
 
-  iframe.onload = () => {
-    const data = iframe.contentWindow.__DATA__;
+    if (!res.ok) {
+      throw new Error("HTTP 오류: " + res.status);
+    }
 
-    if (!data) {
-      console.error("Apps Script 데이터 수신 실패");
+    const json = await res.json();
+    if (!json.ok) {
+      console.error("서버 오류:", json.error);
       return;
     }
 
-    console.log("시트 데이터:", data);
+    const data = json.data;
 
-    // 🔽 여기서 기존 loadFromSheets 이후 로직 수행
-    // 예: applyDataToUI(data);
-  };
+    // 기존 데이터 초기화
+    annualOccurrences.length = 0;
+    weekendSubHolidays.length = 0;
+    usedHolidays.length = 0;
+    usedSubHolidays.length = 0;
 
-  document.body.appendChild(iframe);
+    data.annualOccurrences?.forEach(v => annualOccurrences.push(v));
+    data.weekendSubHolidays?.forEach(v => weekendSubHolidays.push(v));
+    data.usedHolidays?.forEach(v => usedHolidays.push(v));
+    data.usedSubHolidays?.forEach(v => usedSubHolidays.push(v));
+
+    refreshUsedLists();
+    refreshLists();
+
+    console.log("시트 데이터 로드 완료", data);
+  } catch (err) {
+    console.error("Sheets fetch 실패:", err);
+  }
 }
 
 async function saveToSheets() {
