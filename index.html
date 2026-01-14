@@ -441,7 +441,7 @@ function handleCredentialResponse(response) {
   const payload = JSON.parse(atob(response.credential.split(".")[1]));
   const userEmail = payload.email;
 
-  console.log("로그인 사용자:", userEmail);
+  console.log("로그인 사용자(Email):", userEmail);
 
   currentUser = userEmail;
 
@@ -507,7 +507,10 @@ async function loadFromSheets(userEmail) {
     refreshLists();
 
     console.log("시트 데이터 로드 완료");
-
+    console.log(ao);
+    console.log(wsh);
+    console.log(uh);
+    console.log(ush);
   } catch (err) {
     console.error("Sheets load 실패:", err);
   }
