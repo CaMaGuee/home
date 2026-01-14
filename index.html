@@ -438,32 +438,37 @@ a {
 let currentUser = null;
 
 function handleCredentialResponse(response) {
-  const payload = JSON.parse(atob(response.credential.split('.')[1]));
-  currentUser = payload.email;
+  const payload = JSON.parse(atob(response.credential.split(".")[1]));
+  const userEmail = payload.email;
 
-  console.log("로그인 사용자 : ", currentUser);
+  console.log("로그인 사용자(이메일):", userEmail);
 
-  loadFromSheets(); // 로그인 이후에만 호출
+  loadFromSheetsViaIframe(userEmail);
 }
 
-const API_URL = "https://script.google.com/macros/s/AKfycbwn3rpAlK3GVLrEe3awxLlRJELdgWpl26k_QnBPNPr1uWDiqG-xnXy1dadyL2EsdxetJg/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyBMUmSy6O2UHqhtNC5VCb1b2vjHcl2VzSRvm7BceewaDsDsfwkrnfdNuD1sTfkRq3EMQ/exec";
 
-async function loadFromSheets() {
-  if (!currentUser) return;
+function loadFromSheetsViaIframe(userEmail) {
+  const iframe = document.createElement("iframe");
 
-  let login = document.getElementById("g_Login_Btn");
-  login.style.display = "none";
+  iframe.src = API_URL + "?userId=" + encodeURIComponent(userEmail);
+  iframe.style.display = "none";
 
-  const res = await fetch(`${API_URL}?userId=${encodeURIComponent(currentUser)}`);
-  const data = await res.json();
+  iframe.onload = () => {
+    const data = iframe.contentWindow.__DATA__;
 
-  annualOccurrences.splice(0, annualOccurrences.length, ...data.annualOccurrences);
-  weekendSubHolidays.splice(0, weekendSubHolidays.length, ...data.weekendSubHolidays);
-  usedHolidays.splice(0, usedHolidays.length, ...data.usedHolidays);
-  usedSubHolidays.splice(0, usedSubHolidays.length, ...data.usedSubHolidays);
+    if (!data) {
+      console.error("Apps Script 데이터 수신 실패");
+      return;
+    }
 
-  refreshLists();
-  refreshUsedLists();
+    console.log("시트 데이터:", data);
+
+    // 🔽 여기서 기존 loadFromSheets 이후 로직 수행
+    // 예: applyDataToUI(data);
+  };
+
+  document.body.appendChild(iframe);
 }
 
 async function saveToSheets() {
