@@ -441,7 +441,7 @@ function handleCredentialResponse(response) {
   const payload = JSON.parse(atob(response.credential.split(".")[1]));
   const userEmail = payload.email;
 
-  console.log("로그인 사용자(이메일):", userEmail);
+  console.log("로그인 사용자:", userEmail);
 
   currentUser = userEmail;
 
@@ -451,7 +451,7 @@ function handleCredentialResponse(response) {
 }
 
 
-const API_URL = "google-sheet-api-orpin.vercel.app";
+const API_URL = "google-sheet-api-orpin.vercel.app/api";
 
 async function loadFromSheets(userEmail) {
   try {
