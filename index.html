@@ -1,855 +1,1101 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#317EFB">
-<link rel="icon" type="image/png" href="favicon.png?v=2">
-<link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
-<link rel="apple-touch-icon" href="favicon.png?v=2">
-<link rel="shortcut icon" href="favicon.ico?v=2">
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>휴가 계산기</title>
-<style>
-/* ===== 기본 ===== */
-html, body { overflow: auto; background:#f0f2f5; }
-html::-webkit-scrollbar { width:0px; background:transparent; }
-html { scrollbar-width:none; -ms-overflow-style:none; }
-body {
-  font-family:"Noto Sans KR", sans-serif;
-  margin:0 auto;
-  background:#f0f2f5;
-  color:#111;
-}
-.g_id_signin{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  z-index: 9999;
-  position:relative;
-}
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#317EFB">
+  <link rel="icon" type="image/png" href="favicon.png?v=2">
+  <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
+  <link rel="apple-touch-icon" href="favicon.png?v=2">
+  <link rel="shortcut icon" href="favicon.ico?v=2">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>휴가 계산기</title>
+  <style>
+    /* ===== 기본 ===== */
+    html,
+    body {
+      overflow: auto;
+      background: #f0f2f5;
+    }
 
-.SubTitleText {
-  margin:0 0 15px 0;
-  display:flex; flex-direction:row; gap:5px;
-  justify-content:left;
-  align-items:center;
-}
-.SubTitleLogo {
-  width:20px; height:20px;
-  background:linear-gradient(180deg,#00aeff94,#0084ffec);
-  box-shadow:0 2px 6px rgba(0, 47, 255, 0.4);
-  border-radius: 7px;
-}
+    html::-webkit-scrollbar {
+      width: 0px;
+      background: transparent;
+    }
 
-/* ===== 버튼 ===== */
-button { padding:8px 14px; border-radius:5px; border:none; cursor:pointer; font-weight:600; }
-button.primary { font-size:13px; margin-top:10px; background:linear-gradient(180deg,#0055ffa1,#0055ff); box-shadow:0 4px 12px rgba(0, 47, 255, 0.4); color:#fff; }
-button.primary:hover { background:linear-gradient(180deg,#0055ff80,#0055ffcb); box-shadow:0 4px 12px rgba(2,6,23,0.04); color:#fff; }
-button.small { background:#f1f3f6; color:#202124; }
+    html {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
 
-.DataBtn { padding:8px 20px; font-weight: 500; font-size: 11px; box-shadow:0 4px 12px rgba(2,6,23,0.04); transition: transform .12s ease, box-shadow .12s ease;}
-.DataBtn:hover { transform:translateY(-4px); box-shadow:0 8px 22px rgba(2,6,23,0.08); background:#c4c4c49f; }
+    body {
+      font-family: "Noto Sans KR", sans-serif;
+      margin: 0 auto;
+      background: #f0f2f5;
+      color: #111;
+    }
 
-.AnnualTypeBtn {width:100%; display:flex; flex-direction:row; gap:5px; justify-content: center }
-#AnnualListBtn, #SubListBtn, #UsedAnnualListBtn, #UsedSubListBtn {padding:8px 10px; font-weight: 500; font-size: 11px; box-shadow:0 4px 12px rgba(2,6,23,0.04); transition: transform .12s ease, box-shadow .12s ease;}
-#AnnualListBtn.active, #SubListBtn.active, #UsedAnnualListBtn.active, #UsedSubListBtn.active { transform:translateY(-4px); box-shadow:0 8px 22px rgba(2,6,23,0.08); background:#c4c4c49f; }
+    .g_id_signin {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      z-index: 9999;
+      position: relative;
+    }
 
-/* ===== 캘린더 ===== */
-#calendar { border-radius:14px; overflow:hidden; }
-h2.fc-toolbar-title { font-size: 14px !important; }
-.fc-toolbar-chunk .fc-button { font-size: 10px !important; }
-.fc .fc-daygrid-day-number { font-size:13px; font-weight:600; padding:6px; color:rgb(87,0,0); }
-.fc .fc-daygrid-event { font-size:12px; border-radius:8px; padding:4px 6px; }
-.fc .fc-daygrid-day-frame { aspect-ratio: 1 / 1.2; height: auto !important; }
+    .SubTitleText {
+      margin: 0 0 15px 0;
+      display: flex;
+      flex-direction: row;
+      gap: 5px;
+      justify-content: left;
+      align-items: center;
+    }
+
+    .SubTitleLogo {
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(180deg, #00aeff94, #0084ffec);
+      box-shadow: 0 2px 6px rgba(0, 47, 255, 0.4);
+      border-radius: 7px;
+    }
+
+    /* ===== 버튼 ===== */
+    button {
+      padding: 8px 14px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button.primary {
+      font-size: 13px;
+      margin-top: 10px;
+      background: linear-gradient(180deg, #0055ffa1, #0055ff);
+      box-shadow: 0 4px 12px rgba(0, 47, 255, 0.4);
+      color: #fff;
+    }
+
+    button.primary:hover {
+      background: linear-gradient(180deg, #0055ff80, #0055ffcb);
+      box-shadow: 0 4px 12px rgba(2, 6, 23, 0.04);
+      color: #fff;
+    }
+
+    button.small {
+      background: #f1f3f6;
+      color: #202124;
+    }
+
+    .DataBtn {
+      padding: 8px 20px;
+      font-weight: 500;
+      font-size: 11px;
+      box-shadow: 0 4px 12px rgba(2, 6, 23, 0.04);
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
+
+    .DataBtn:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 22px rgba(2, 6, 23, 0.08);
+      background: #c4c4c49f;
+    }
+
+    .AnnualTypeBtn {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      gap: 5px;
+      justify-content: center
+    }
+
+    #AnnualListBtn,
+    #SubListBtn,
+    #UsedAnnualListBtn,
+    #UsedSubListBtn {
+      padding: 8px 10px;
+      font-weight: 500;
+      font-size: 11px;
+      box-shadow: 0 4px 12px rgba(2, 6, 23, 0.04);
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
+
+    #AnnualListBtn.active,
+    #SubListBtn.active,
+    #UsedAnnualListBtn.active,
+    #UsedSubListBtn.active {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 22px rgba(2, 6, 23, 0.08);
+      background: #c4c4c49f;
+    }
+
+    /* ===== 캘린더 ===== */
+    #calendar {
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    h2.fc-toolbar-title {
+      font-size: 14px !important;
+    }
+
+    .fc-toolbar-chunk .fc-button {
+      font-size: 10px !important;
+    }
+
+    .fc .fc-daygrid-day-number {
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px;
+      color: rgb(87, 0, 0);
+    }
+
+    .fc .fc-daygrid-event {
+      font-size: 12px;
+      border-radius: 8px;
+      padding: 4px 6px;
+    }
+
+    .fc .fc-daygrid-day-frame {
+      aspect-ratio: 1 / 1.2;
+      height: auto !important;
+    }
 
 
-/* ===== 모달 ===== */
-#holidayModal, #holidayModal_Annual {
-  display:none; position:fixed; top:0; left:0;
-  width:100%; height:100%;
-  background:rgba(0,0,0,0.4);
-  justify-content:center; align-items:center;
-  z-index:9999;
-}
-#holidayModal > div, #holidayModal_Annual > div {
-  background:#fff; padding:24px; border-radius:14px;
-  min-width:260px; text-align:center; z-index:9999;
-}
+    /* ===== 모달 ===== */
+    #holidayModal,
+    #holidayModal_Annual {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
 
-/* ===== 상단 네비 ===== */
-nav {
-  width:100%; background-color:#ffffffb7; position:fixed;
-  top:0; padding:0 auto; z-index:9999;
-  backdrop-filter:blur(10px);
-}
-.titleNav { margin:0 auto; padding:0 24px; max-width:1100px; }
-h1 { font-size:18px; text-align:left; }
+    #holidayModal>div,
+    #holidayModal_Annual>div {
+      background: #fff;
+      padding: 24px;
+      border-radius: 14px;
+      min-width: 260px;
+      text-align: center;
+      z-index: 9999;
+    }
+
+    /* ===== 상단 네비 ===== */
+    nav {
+      width: 100%;
+      background-color: #ffffffb7;
+      position: fixed;
+      top: 0;
+      padding: 0 auto;
+      z-index: 9999;
+      backdrop-filter: blur(10px);
+    }
+
+    .titleNav {
+      margin: 0 auto;
+      padding: 0 24px;
+      max-width: 1100px;
+    }
+
+    h1 {
+      font-size: 18px;
+      text-align: left;
+    }
 
 
-/* ===== 레이아웃 ===== */
-.panel { margin:0 auto; margin-top:60px; max-width:1100px; padding:24px; backdrop-filter:blur(10px); }
-.flex { display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start; }
-.left { min-width:280px; flex:1; }
-.right { min-width:280px; flex:1; }
+    /* ===== 레이아웃 ===== */
+    .panel {
+      margin: 0 auto;
+      margin-top: 60px;
+      max-width: 1100px;
+      padding: 24px;
+      backdrop-filter: blur(10px);
+    }
 
-.left-item {
-  display:flex; flex-direction:column;
-  padding:20px; border-radius:12px;
-  background:linear-gradient(180deg,#ffffff,#fbfcfe);
-  box-shadow:0 4px 12px rgba(2,6,23,0.04);
-  transition: transform .12s ease, box-shadow .12s ease;
-}
-.left-item:hover {
-  transform:translateY(-4px);
-  box-shadow:0 8px 22px rgba(2,6,23,0.08);
-}
+    .flex {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
 
-.right-item {
-  font-size:14px;
-  display:flex; flex-direction:column;
-  padding:20px; border-radius:12px;
-  background:linear-gradient(180deg,#ffffff,#fbfcfe);
-  align-items: flex-start;
-  box-shadow:0 4px 12px rgba(2,6,23,0.04);
-  transition: transform .12s ease, box-shadow .12s ease;
-}
-.right-item:hover {
-  transform:translateY(-4px);
-  box-shadow:0 8px 22px rgba(2,6,23,0.08);
-}
+    .left {
+      min-width: 280px;
+      flex: 1;
+    }
 
-.donut {
-  position: relative;
-  width: 140px; height: 140px;
-  margin: 0 auto;
-}
-.donut-ring { transform: rotate(-90deg); }
-.donut-bg {
-  fill: none;
-  stroke: #eee;
-  stroke-width: 12;
-}
-.donut-fg {
-  fill: none;
-  stroke-width: 12;
-  stroke-linecap: round;
-  stroke: #007aff;
-  stroke-dasharray: 339.292;  /* 2πr = 2*π*54 */
-  stroke-dashoffset: 339.292; /* 처음에 다 숨김 */
-  transition: stroke-dashoffset 0.6s ease;
-}
-.donut-label {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-weight: bold;
-  font-size: 20px;
-}
+    .right {
+      min-width: 280px;
+      flex: 1;
+    }
 
-#AnnualListView, #SubListView, #UsedAnnualListView, #UsedSubListView {
-  opacity: 0;
-  max-height: 0;
-  overflow: hidden;
-  transition: opacity 0.5s ease, max-height 0.5s ease;
-}
+    .left-item {
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #ffffff, #fbfcfe);
+      box-shadow: 0 4px 12px rgba(2, 6, 23, 0.04);
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
 
-#AnnualListView.active, #SubListView.active, #UsedAnnualListView.active, #UsedSubListView.active {
-  opacity: 1;
-  max-height: 1000px; /* 충분히 큰 값으로 설정 */
-}
+    .left-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 22px rgba(2, 6, 23, 0.08);
+    }
 
-/* ===== 입력 ===== */
-#left-top-input-field {
-  align-items: flex-start;    /* 윗 정렬 */
-  display:flex; flex-direction:row; gap:12px;
-  width:100%;
-  justify-content: center;
-}
-#AnnualInput {
-  font-size: 13px;
-  width:50%;
-  display:flex; flex-direction:column; gap:5px;
-  justify-content:center;
-}
-#SubInput {
-  font-size: 13px;
-  width:50%;
-  display:flex; flex-direction:column; gap:5px;
-  justify-content:center;
-}
-input[type="date"], input[type="number"] {
-  padding:8px 10px; border-radius:5px;
-  border:1px solid #00000031;
-}
+    .right-item {
+      font-size: 14px;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #ffffff, #fbfcfe);
+      align-items: flex-start;
+      box-shadow: 0 4px 12px rgba(2, 6, 23, 0.04);
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
 
-/* ===== 리스트 ===== */
-.list {
-  max-height:340px; overflow-y:auto;
-  border-radius:14px; background:#fbfbfd;
-  padding:10px;
-}
-.item {
-  display:flex; justify-content:space-between; align-items:center;
-  padding:10px 12px; margin-bottom:10px; border-radius:12px;
-  background:linear-gradient(180deg,#ffffff,#fbfcfe);
-  box-shadow:0 4px 12px rgba(2,6,23,0.04);
-  transition: transform .12s ease, box-shadow .12s ease;
-}
-.item:hover { transform:translateY(-4px); box-shadow:0 8px 22px rgba(2,6,23,0.08); }
-.item:last-child { margin-bottom:0; }
+    .right-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 22px rgba(2, 6, 23, 0.08);
+    }
 
-/* ===== 상태 ===== */
-.status { margin-top:10px; font-weight:700; color:#0b1220; }
-.status span { color:#007aff; }
+    .donut {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      margin: 0 auto;
+    }
 
-/* ===== 기타 ===== */
-#ManualBtn { right:5%; top:2%; position:fixed; z-index:9999; color:#0000008f; transition: transform .12s ease }
-#ManualBtn:hover { transform:translateY(-2px); }
-a {
-  color: inherit;           /* 부모 글자색 따라가기 */
-  text-decoration: none;    /* 밑줄 제거 */
-  font-weight: 600;
-}
+    .donut-ring {
+      transform: rotate(-90deg);
+    }
 
-.notice-bar{
-  position: fixed;
-  bottom:0;
-  backdrop-filter:blur(3px);
-  overflow: hidden;
-  white-space: nowrap;
-  width: 100%;
-  background: #8100000c;
-  color:#8a0000c0;
-  border: 0;
-  padding: 2px 0;
-  z-index: 9999;
-}
+    .donut-bg {
+      fill: none;
+      stroke: #eee;
+      stroke-width: 12;
+    }
 
-.notice-track{
-  display: inline-block;
-  padding-left: 100%;
-  /* 화면 바깥에서 오른쪽→왼쪽으로 흘러감 */
-  animation: marquee 18s linear infinite;
-}
+    .donut-fg {
+      fill: none;
+      stroke-width: 12;
+      stroke-linecap: round;
+      stroke: #007aff;
+      stroke-dasharray: 339.292;
+      /* 2πr = 2*π*54 */
+      stroke-dashoffset: 339.292;
+      /* 처음에 다 숨김 */
+      transition: stroke-dashoffset 0.6s ease;
+    }
 
-/* 텍스트 사이 간격 */
-.notice-track span{
-  display: inline-block;
-  padding: 0 5rem;
-  font-size: 13px;
-}
+    .donut-label {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      font-size: 20px;
+    }
 
-@keyframes marquee{
-  from { transform: translateX(0); }
-  to   { transform: translateX(-100%); }
-}
+    #AnnualListView,
+    #SubListView,
+    #UsedAnnualListView,
+    #UsedSubListView {
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: opacity 0.5s ease, max-height 0.5s ease;
+    }
 
-/* 모션 최소화 존중 */
-@media (prefers-reduced-motion: reduce){
-  .notice-track{ animation: none; padding-left: 0; }
-}
+    #AnnualListView.active,
+    #SubListView.active,
+    #UsedAnnualListView.active,
+    #UsedSubListView.active {
+      opacity: 1;
+      max-height: 1000px;
+      /* 충분히 큰 값으로 설정 */
+    }
 
-@media (max-width: 900px) {
-  .notice-track { animation-duration: 15s; }
-}
-@media (max-width: 700px) {
-  .notice-track { animation-duration: 12s; }
-}
-@media (max-width: 500px) {
-  .notice-track { animation-duration: 10s; }
-}
+    /* ===== 입력 ===== */
+    #left-top-input-field {
+      align-items: flex-start;
+      /* 윗 정렬 */
+      display: flex;
+      flex-direction: row;
+      gap: 12px;
+      width: 100%;
+      justify-content: center;
+    }
 
-/* ===== 공백 ===== */
-.invisible-block {
-  visibility: hidden;      /* 안 보임 + 자리 차지 */
-  pointer-events: none;    /* 마우스 이벤트 막기 */
-}
+    #AnnualInput {
+      font-size: 13px;
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      justify-content: center;
+    }
 
-#body-wrapper {
-  transform-origin: top center;
-}
+    #SubInput {
+      font-size: 13px;
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      justify-content: center;
+    }
 
-@media (max-width: 480px) {
-  #body-wrapper {
-      transform: scale(0.9);
-  }
-}
+    input[type="date"],
+    input[type="number"] {
+      padding: 8px 10px;
+      border-radius: 5px;
+      border: 1px solid #00000031;
+    }
 
-</style>
+    /* ===== 리스트 ===== */
+    .list {
+      max-height: 340px;
+      overflow-y: auto;
+      border-radius: 14px;
+      background: #fbfbfd;
+      padding: 10px;
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #ffffff, #fbfcfe);
+      box-shadow: 0 4px 12px rgba(2, 6, 23, 0.04);
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
+
+    .item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 22px rgba(2, 6, 23, 0.08);
+    }
+
+    .item:last-child {
+      margin-bottom: 0;
+    }
+
+    /* ===== 상태 ===== */
+    .status {
+      margin-top: 10px;
+      font-weight: 700;
+      color: #0b1220;
+    }
+
+    .status span {
+      color: #007aff;
+    }
+
+    /* ===== 기타 ===== */
+    #ManualBtn {
+      right: 5%;
+      top: 2%;
+      position: fixed;
+      z-index: 9999;
+      color: #0000008f;
+      transition: transform .12s ease
+    }
+
+    #ManualBtn:hover {
+      transform: translateY(-2px);
+    }
+
+    a {
+      color: inherit;
+      /* 부모 글자색 따라가기 */
+      text-decoration: none;
+      /* 밑줄 제거 */
+      font-weight: 600;
+    }
+
+    .notice-bar {
+      position: fixed;
+      bottom: 0;
+      backdrop-filter: blur(3px);
+      overflow: hidden;
+      white-space: nowrap;
+      width: 100%;
+      background: #8100000c;
+      color: #8a0000c0;
+      border: 0;
+      padding: 2px 0;
+      z-index: 9999;
+    }
+
+    .notice-track {
+      display: inline-block;
+      padding-left: 100%;
+      /* 화면 바깥에서 오른쪽→왼쪽으로 흘러감 */
+      animation: marquee 18s linear infinite;
+    }
+
+    /* 텍스트 사이 간격 */
+    .notice-track span {
+      display: inline-block;
+      padding: 0 5rem;
+      font-size: 13px;
+    }
+
+    @keyframes marquee {
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(-100%);
+      }
+    }
+
+    /* 모션 최소화 존중 */
+    @media (prefers-reduced-motion: reduce) {
+      .notice-track {
+        animation: none;
+        padding-left: 0;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .notice-track {
+        animation-duration: 15s;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .notice-track {
+        animation-duration: 12s;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .notice-track {
+        animation-duration: 10s;
+      }
+    }
+
+    /* ===== 공백 ===== */
+    .invisible-block {
+      visibility: hidden;
+      /* 안 보임 + 자리 차지 */
+      pointer-events: none;
+      /* 마우스 이벤트 막기 */
+    }
+
+    #body-wrapper {
+      transform-origin: top center;
+    }
+
+    @media (max-width: 480px) {
+      #body-wrapper {
+        transform: scale(0.9);
+      }
+    }
+  </style>
 </head>
+
 <body>
-<div class="AllContents">
-  <!-- 상단 네비 -->
-  <nav>
-    <div class="titleNav"><h1>휴가 계산기</h1></div>
-    <div  id="g_id_onload"
-          data-client_id="19750603652-8l73dff12the5mt573901a7cmht6i7c0.apps.googleusercontent.com"
-          data-callback="handleCredentialResponse"
-          data-auto_prompt="false">
-    </div>
-
-    <div  class="g_id_signin"
-          id ="g_Login_Btn"
-          data-type="standard"
-          data-size="large"
-          data-theme="outline"
-          data-text="signin_with"
-          data-shape="rectangular">
-    </div>
-  </nav>
-
-
-  <div class="notice-bar">
-    <div class="notice-track">
-      <span>[공지] 구글 로그인으로 데이터 자동 기록 업데이트 2026.01.14</span>
-    </div>
-  </div>
-
-  <!-- 매뉴얼 버튼 -->
-  <div id="ManualBtn">
-    <label style="font-weight:600; font-size:12px;">
-      <a href="https://github.com/CaMaGuee/home/blob/eaa910882981738c4152cb40123aa7266c91a898/%ED%9C%B4%EA%B0%80%20%EA%B3%84%EC%82%B0%EA%B8%B0%20%EB%A9%94%EB%89%B4%EC%96%BC.pdf">사용 방법</a>
-    </label>
-  </div>
-
-  <div id="body-wrapper">
-  <!-- 메인 패널 -->
-  <div class="panel flex">
-    <!-- 왼쪽 -->
-    <div class="left">
-      <div class="left-item">
-        <h4 class="SubTitleText"><div class="SubTitleLogo" ></div>휴가 추가</h2>
-        <div id="left-top-input-field">
-          <div id="AnnualInput">
-            <label style="padding-left:3px;">연차 발생일</label>
-            <input id="annDate" style="text-align: center" type="date">
-            <label style="padding-left:3px;">일수</label>
-            <input id="annDays" style="text-align: center" type="number" min="0.25" step="0.25" value="1">
-            <button id="addAnn" class="primary">추가</button>
-          </div>
-          <div id="SubInput">
-            <label style="padding-left:3px;">대체휴가 수동 입력</label>
-            <input id="SubDateADD" style="text-align: center" type="date">
-            <label class="invisible-block" style="padding-left:3px;">일수</label>
-            <input class="invisible-block" type="number" min="0.25" step="0.25" value="1">
-            <button id="addSub" class="primary">추가</button>
-          </div>
-        </div>
-        <div id="left-top-btn" style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;"></div>
-        <div id="left-top-save-load-btn">
-          <button id="exportData" class="DataBtn small">내보내기</button>
-          <input type="file" id="importFile" style="display:none;">
-          <button id="importData" class="DataBtn small">불러오기</button>
-        </div>
+  <div class="AllContents">
+    <!-- 상단 네비 -->
+    <nav>
+      <div class="titleNav">
+        <h1>휴가 계산기</h1>
       </div>
-      <br/>
-      <div class="left-item">
-        <h4 class="SubTitleText"><div class="SubTitleLogo" ></div>캘린더</h2>
-        <div style="display: flex; justify-content:right; gap:5px; margin: -20px 0 10px 0;">
-          <input style="font-size: 11px;" type="date" id="jumpDate">
-          <button style="font-size: 12px;" id="goBtn">이동</button>
-        </div>
-        <div id="calendar" style="padding-bottom:15px;"></div>
+      <div id="g_id_onload" data-client_id="19750603652-8l73dff12the5mt573901a7cmht6i7c0.apps.googleusercontent.com"
+        data-callback="handleCredentialResponse" data-auto_prompt="false">
       </div>
-      <br/>
+
+      <div class="g_id_signin" id="g_Login_Btn" data-type="standard" data-size="large" data-theme="outline"
+        data-text="signin_with" data-shape="rectangular">
+      </div>
+    </nav>
+
+
+    <div class="notice-bar">
+      <div class="notice-track">
+        <span>[공지] 구글 로그인으로 데이터 자동 기록 업데이트 2026.01.14</span>
+      </div>
     </div>
 
-    <!-- 오른쪽 -->
-    <div class="right">
-      <div class="right-item">
-        <h4 class="SubTitleText"><div class="SubTitleLogo"></div>남은 기간</h4>
-        <div class="donut">
-          <svg class="donut-ring" width="140" height="140" viewBox="0 0 120 120">
-            <circle class="donut-bg" cx="60" cy="60" r="54"></circle>
-            <circle class="donut-fg" cx="60" cy="60" r="54"></circle>
-          </svg>
-          <div class="donut-label">
-            <span id="donutText">0%</span>
-            <div style="font-size:12px; color:#555;">
-              남은 <span id="donutRemain">0</span> / <span id="donutTotal">0</span>
+    <!-- 매뉴얼 버튼 -->
+    <div id="ManualBtn">
+      <label style="font-weight:600; font-size:12px;">
+        <a
+          href="https://github.com/CaMaGuee/home/blob/eaa910882981738c4152cb40123aa7266c91a898/%ED%9C%B4%EA%B0%80%20%EA%B3%84%EC%82%B0%EA%B8%B0%20%EB%A9%94%EB%89%B4%EC%96%BC.pdf">사용
+          방법</a>
+      </label>
+    </div>
+
+    <!-- 메인 패널 -->
+    <div class="panel flex">
+      <!-- 왼쪽 -->
+      <div class="left">
+        <div class="left-item">
+          <h4 class="SubTitleText">
+            <div class="SubTitleLogo"></div>휴가 추가</h2>
+            <div id="left-top-input-field">
+              <div id="AnnualInput">
+                <label style="padding-left:3px;">연차 발생일</label>
+                <div id="body-wrapper">
+                  <input id="annDate" style="text-align: center" type="date">
+                </div>
+                <label style="padding-left:3px;">일수</label>
+                <div id="body-wrapper">
+                  <input id="annDays" style="text-align: center" type="number" min="0.25" step="0.25" value="1">
+                </div>
+                <button id="addAnn" class="primary">추가</button>
+              </div>
+              <div id="SubInput">
+                <label style="padding-left:3px;">대체휴가 수동 입력</label>
+                <div id="body-wrapper">
+                  <input id="SubDateADD" style="text-align: center" type="date">
+                </div>
+                <label class="invisible-block" style="padding-left:3px;">일수</label>
+                <div id="body-wrapper">
+                  <input class="invisible-block" type="number" min="0.25" step="0.25" value="1">
+                </div>
+                <button id="addSub" class="primary">추가</button>
+              </div>
+            </div>
+            <div id="left-top-btn" style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;"></div>
+            <div id="left-top-save-load-btn">
+              <button id="exportData" class="DataBtn small">내보내기</button>
+              <input type="file" id="importFile" style="display:none;">
+              <button id="importData" class="DataBtn small">불러오기</button>
+            </div>
+        </div>
+        <br />
+        <div class="left-item">
+          <h4 class="SubTitleText">
+            <div class="SubTitleLogo"></div>캘린더</h2>
+            <div style="display: flex; justify-content:right; gap:5px; margin: -20px 0 10px 0;">
+              <input style="font-size: 11px;" type="date" id="jumpDate">
+              <button style="font-size: 12px;" id="goBtn">이동</button>
+            </div>
+            <div id="calendar" style="padding-bottom:15px;"></div>
+        </div>
+        <br />
+      </div>
+
+      <!-- 오른쪽 -->
+      <div class="right">
+        <div class="right-item">
+          <h4 class="SubTitleText">
+            <div class="SubTitleLogo"></div>남은 기간
+          </h4>
+          <div class="donut">
+            <svg class="donut-ring" width="140" height="140" viewBox="0 0 120 120">
+              <circle class="donut-bg" cx="60" cy="60" r="54"></circle>
+              <circle class="donut-fg" cx="60" cy="60" r="54"></circle>
+            </svg>
+            <div class="donut-label">
+              <span id="donutText">0%</span>
+              <div style="font-size:12px; color:#555;">
+                남은 <span id="donutRemain">0</span> / <span id="donutTotal">0</span>
+              </div>
             </div>
           </div>
+          <div style="margin-top:20px; width: 100%; display:flex; flex-direction: column; align-items: center;">
+            <div style="color:#048300; font-weight: 600; font-size: 20px;"><span id="remainingSub">0</span></div>
+            <div class="status" style="margin-top: 0;">대체휴가</div>
+          </div>
         </div>
-        <div style="margin-top:20px; width: 100%; display:flex; flex-direction: column; align-items: center;">
-          <div style="color:#048300; font-weight: 600; font-size: 20px;"><span id="remainingSub">0</span></div>
-          <div class="status" style="margin-top: 0;">대체휴가</div>
-        </div>
-      </div>
-      <br/>
-      <div class="right-item">
-        <h4 class="SubTitleText"><div class="SubTitleLogo" ></div>사용 기간</h2>
-        <div class="AnnualTypeBtn">
-          <button id="AnnualListBtn">발생 연차</button>
-          <button id="SubListBtn">발생 대휴</button>
-          <button id="UsedAnnualListBtn">사용 연차</button>
-          <button id="UsedSubListBtn">사용 대휴</button>
-        </div>
-        <br/>
-        <div id="AnnualListView" style="width: 100%">
-          <div class="status">발생 연차 리스트</div>
-          <div id="annList" class="list"></div>
-        </div>
-        <div id="SubListView" style="width: 100%">
-          <div class="status">추가 대체휴가 리스트</div>
-          <div id="addedSubList" class="list"></div>
-        </div>
-        <div id="UsedAnnualListView" style="width: 100%">
-          <div class="status">사용 휴가 리스트</div>
-          <div id="usedList" class="list"></div>
-        </div>
-        <div id="UsedSubListView" style="width: 100%">
-          <div class="status">사용 대체휴가 리스트</div>
-          <div id="usedSubList" class="list"></div>
-        </div>
+        <br />
+        <div class="right-item">
+          <h4 class="SubTitleText">
+            <div class="SubTitleLogo"></div>사용 기간</h2>
+            <div class="AnnualTypeBtn">
+              <button id="AnnualListBtn">발생 연차</button>
+              <button id="SubListBtn">발생 대휴</button>
+              <button id="UsedAnnualListBtn">사용 연차</button>
+              <button id="UsedSubListBtn">사용 대휴</button>
+            </div>
+            <br />
+            <div id="AnnualListView" style="width: 100%">
+              <div class="status">발생 연차 리스트</div>
+              <div id="annList" class="list"></div>
+            </div>
+            <div id="SubListView" style="width: 100%">
+              <div class="status">추가 대체휴가 리스트</div>
+              <div id="addedSubList" class="list"></div>
+            </div>
+            <div id="UsedAnnualListView" style="width: 100%">
+              <div class="status">사용 휴가 리스트</div>
+              <div id="usedList" class="list"></div>
+            </div>
+            <div id="UsedSubListView" style="width: 100%">
+              <div class="status">사용 대체휴가 리스트</div>
+              <div id="usedSubList" class="list"></div>
+            </div>
         </div>
       </div>
     </div>
   </div>
-</div>
   <!-- 모달: 평일 선택 -->
   <div id="holidayModal">
     <div>
-      <h4 class="SubTitleText"><div class="SubTitleLogo" ></div>휴가 사용</h2>
-      <br/>
-      <div style="margin-bottom:12px; font-weight:400;">휴가를 추가하시겠습니까?</div>
-      <div style="display:flex; gap:8px; justify-content:center;">
-        <button id="modalAnnual" class="primary">연차</button>
-        <button id="modalSub" class="primary">대체휴가</button>
-        <button id="modalCancel" class="small">취소</button>
-      </div>
+      <h4 class="SubTitleText">
+        <div class="SubTitleLogo"></div>휴가 사용</h2>
+        <br />
+        <div style="margin-bottom:12px; font-weight:400;">휴가를 추가하시겠습니까?</div>
+        <div style="display:flex; gap:8px; justify-content:center;">
+          <button id="modalAnnual" class="primary">연차</button>
+          <button id="modalSub" class="primary">대체휴가</button>
+          <button id="modalCancel" class="small">취소</button>
+        </div>
     </div>
   </div>
 
   <!-- 모달: 연차 상세 선택 -->
   <div id="holidayModal_Annual">
     <div>
-      <h4 class="SubTitleText"><div class="SubTitleLogo" ></div>연차 선택</h2>
-      <br/>
-      <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
-        <button id="modalFull" class="primary">휴가(1일)</button>
-        <button id="modalHalf" class="primary">휴가(0.5일)</button>
-        <button id="modalQuarter" class="primary">휴가(0.25일)</button>
-        <button id="modalAnnualCancel" class="small">취소</button>
-      </div>
+      <h4 class="SubTitleText">
+        <div class="SubTitleLogo"></div>연차 선택</h2>
+        <br />
+        <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+          <button id="modalFull" class="primary">휴가(1일)</button>
+          <button id="modalHalf" class="primary">휴가(0.5일)</button>
+          <button id="modalQuarter" class="primary">휴가(0.25일)</button>
+          <button id="modalAnnualCancel" class="small">취소</button>
+        </div>
     </div>
   </div>
 
   <!-- 저장 중 오버레이 -->
-  <div id="savingOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:99999; justify-content:center; align-items:center;">
-    <div style="background:white; padding:30px; border-radius:16px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.3);">
+  <div id="savingOverlay"
+    style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:99999; justify-content:center; align-items:center;">
+    <div
+      style="background:white; padding:30px; border-radius:16px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.3);">
       <div style="font-size:24px; font-weight:bold; margin-bottom:16px;">저장 중입니다...</div>
       <div style="font-size:14px; color:#666;">잠시만 기다려주세요</div>
     </div>
   </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
-<script>
-let currentUser = null;
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+  <script>
+    let currentUser = null;
 
-function handleCredentialResponse(response) {
-  const payload = JSON.parse(atob(response.credential.split(".")[1]));
-  const userEmail = payload.email;
+    function handleCredentialResponse(response) {
+      const payload = JSON.parse(atob(response.credential.split(".")[1]));
+      const userEmail = payload.email;
 
-  console.log("로그인 사용자(Email):", userEmail);
+      console.log("로그인 사용자(Email):", userEmail);
 
-  currentUser = userEmail;
+      currentUser = userEmail;
 
-  document.getElementById("g_Login_Btn").style.display = "none";
+      document.getElementById("g_Login_Btn").style.display = "none";
 
-  loadFromSheets(currentUser);
-}
+      loadFromSheets(currentUser);
+    }
 
-const API_BASE = "https://google-sheet-api-orpin.vercel.app/api";
+    const API_BASE = "https://google-sheet-api-orpin.vercel.app/api";
 
-async function loadFromSheets(userEmail) {
-  try {
-    const res = await fetch(
-      `${API_BASE}/load?userId=${encodeURIComponent(userEmail)}`,
-      {
-        method: "GET",
-        mode: "cors",
-        credentials: "omit"
+    async function loadFromSheets(userEmail) {
+      try {
+        const res = await fetch(
+          `${API_BASE}/load?userId=${encodeURIComponent(userEmail)}`,
+          {
+            method: "GET",
+            mode: "cors",
+            credentials: "omit"
+          }
+        );
+
+        if (!res.ok) {
+          throw new Error(`HTTP 오류: ${res.status} - ${res.statusText}`);
+        }
+
+        const data = await res.json();
+
+        // 기존 배열들 초기화
+        annualOccurrences.length = 0;
+        weekendSubHolidays.length = 0;
+        usedHolidays.length = 0;
+        usedSubHolidays.length = 0;
+
+        // 서버에서 바로 받은 객체의 배열들을 그대로 푸시
+        (data.annualOccurrences || []).forEach(item => {
+          annualOccurrences.push({
+            id: Number(item.id),
+            date: item.date,
+            remaining: Number(item.remaining)
+          });
+        });
+
+        (data.weekendSubHolidays || []).forEach(item => {
+          weekendSubHolidays.push({
+            date: item.date,
+            weekday: item.weekday
+          });
+        });
+
+        (data.usedHolidays || []).forEach(item => {
+          usedHolidays.push({
+            date: item.date,
+            weekday: item.weekday,
+            amount: Number(item.amount)
+          });
+        });
+
+        (data.usedSubHolidays || []).forEach(item => {
+          usedSubHolidays.push({
+            date: item.date,
+            weekday: item.weekday
+          });
+        });
+
+        // 연차 ID 카운터 업데이트 (가장 큰 id + 1)
+        if (annualOccurrences.length > 0) {
+          const maxId = Math.max(...annualOccurrences.map(item => item.id || 0));
+          annIdCounter = maxId + 1;
+        }
+
+        // UI 갱신
+        refreshUsedLists();
+        refreshLists();
+
+        console.log("✅ 시트에서 데이터 로드 완료");
+        console.log("연차 발생:", annualOccurrences);
+        console.log("추가 대체휴가:", weekendSubHolidays);
+        console.log("사용 연차:", usedHolidays);
+        console.log("사용 대체휴가:", usedSubHolidays);
+
+      } catch (err) {
+        console.error("❌ Sheets 데이터 로드 실패:", err);
+        alert("데이터를 불러오지 못했습니다.\n인터넷 연결이나 서버 상태를 확인해주세요.");
       }
-    );
-
-    if (!res.ok) {
-      throw new Error(`HTTP 오류: ${res.status} - ${res.statusText}`);
     }
 
-    const data = await res.json();
+    let saveTimeout = null;
 
-    // 기존 배열들 초기화
-    annualOccurrences.length = 0;
-    weekendSubHolidays.length = 0;
-    usedHolidays.length = 0;
-    usedSubHolidays.length = 0;
+    async function saveToSheets() {
+      if (saveTimeout) clearTimeout(saveTimeout);
 
-    // 서버에서 바로 받은 객체의 배열들을 그대로 푸시
-    (data.annualOccurrences || []).forEach(item => {
-      annualOccurrences.push({
-        id: Number(item.id),
-        date: item.date,
-        remaining: Number(item.remaining)
-      });
-    });
+      saveTimeout = setTimeout(async () => {
+        // 저장 시작 → 오버레이 표시 + 버튼 비활성화
+        document.getElementById('savingOverlay').style.display = 'flex';
 
-    (data.weekendSubHolidays || []).forEach(item => {
-      weekendSubHolidays.push({
-        date: item.date,
-        weekday: item.weekday
-      });
-    });
+        // 모든 버튼 일시 비활성화 (선택적)
+        document.querySelectorAll('button').forEach(btn => btn.disabled = true);
 
-    (data.usedHolidays || []).forEach(item => {
-      usedHolidays.push({
-        date: item.date,
-        weekday: item.weekday,
-        amount: Number(item.amount)
-      });
-    });
+        try {
+          const res = await fetch(`${API_BASE}/save`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId: currentUser,
+              annualOccurrences,
+              weekendSubHolidays,
+              usedHolidays,
+              usedSubHolidays,
+            }),
+          });
 
-    (data.usedSubHolidays || []).forEach(item => {
-      usedSubHolidays.push({
-        date: item.date,
-        weekday: item.weekday
-      });
-    });
+          const json = await res.json();
 
-    // 연차 ID 카운터 업데이트 (가장 큰 id + 1)
-    if (annualOccurrences.length > 0) {
-      const maxId = Math.max(...annualOccurrences.map(item => item.id || 0));
-      annIdCounter = maxId + 1;
+          if (json.success) {
+            console.log("저장 성공");
+          } else {
+            console.error("저장 실패:", json.error);
+            alert("저장에 실패했습니다.\n" + (json.error || "알 수 없는 오류"));
+          }
+        } catch (err) {
+          console.error("저장 오류:", err);
+          alert("저장 중 오류가 발생했습니다.\n인터넷 연결을 확인해주세요.");
+        } finally {
+          // 저장 끝 → 오버레이 숨기기 + 버튼 활성화
+          document.getElementById('savingOverlay').style.display = 'none';
+          document.querySelectorAll('button').forEach(btn => btn.disabled = false);
+        }
+      }, 800);
     }
 
-    // UI 갱신
-    refreshUsedLists();
-    refreshLists();
+  </script>
 
-    console.log("✅ 시트에서 데이터 로드 완료");
-    console.log("연차 발생:", annualOccurrences);
-    console.log("추가 대체휴가:", weekendSubHolidays);
-    console.log("사용 연차:", usedHolidays);
-    console.log("사용 대체휴가:", usedSubHolidays);
+  <script>
+    let firstScan = 0;
+    let annIdCounter = 1;
+    const annualOccurrences = [];
+    const weekendSubHolidays = [];
+    const usedHolidays = [];
+    const usedSubHolidays = [];
 
-  } catch (err) {
-    console.error("❌ Sheets 데이터 로드 실패:", err);
-    alert("데이터를 불러오지 못했습니다.\n인터넷 연결이나 서버 상태를 확인해주세요.");
-  }
-}
+    let currentDate = '';
+    let currentWeekday = '';
 
-let saveTimeout = null;
-
-async function saveToSheets() {
-  if (saveTimeout) clearTimeout(saveTimeout);
-
-  saveTimeout = setTimeout(async () => {
-    // 저장 시작 → 오버레이 표시 + 버튼 비활성화
-    document.getElementById('savingOverlay').style.display = 'flex';
-    
-    // 모든 버튼 일시 비활성화 (선택적)
-    document.querySelectorAll('button').forEach(btn => btn.disabled = true);
-
-    try {
-      const res = await fetch(`${API_BASE}/save`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: currentUser,
-          annualOccurrences,
-          weekendSubHolidays,
-          usedHolidays,
-          usedSubHolidays,
-        }),
-      });
-
-      const json = await res.json();
-
-      if (json.success) {
-        console.log("저장 성공");
-      } else {
-        console.error("저장 실패:", json.error);
-        alert("저장에 실패했습니다.\n" + (json.error || "알 수 없는 오류"));
-      }
-    } catch (err) {
-      console.error("저장 오류:", err);
-      alert("저장 중 오류가 발생했습니다.\n인터넷 연결을 확인해주세요.");
-    } finally {
-      // 저장 끝 → 오버레이 숨기기 + 버튼 활성화
-      document.getElementById('savingOverlay').style.display = 'none';
-      document.querySelectorAll('button').forEach(btn => btn.disabled = false);
+    function getRemainAnnual() {
+      const total = annualOccurrences.reduce((sum, a) => sum + a.remaining, 0);
+      const used = usedHolidays.reduce((sum, u) => sum + u.amount, 0);
+      return { total, used, remain: total - used };
     }
-  }, 800);
-}
 
-</script>
-
-<script>
-let firstScan = 0;
-let annIdCounter = 1;
-const annualOccurrences = [];
-const weekendSubHolidays = [];
-const usedHolidays = [];
-const usedSubHolidays = [];
-
-let currentDate = '';
-let currentWeekday = '';
-
-function getRemainAnnual(){
-  const total = annualOccurrences.reduce((sum,a)=>sum+a.remaining,0);
-  const used  = usedHolidays.reduce((sum,u)=>sum+u.amount,0);
-  return { total, used, remain: total - used };
-}
-
-function refreshLists(){
-  const annList=document.getElementById('annList');
-  const addedSubList=document.getElementById('addedSubList');
-  annList.innerHTML='';
-  annualOccurrences.slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach(item=>{
-    const div=document.createElement('div'); div.className='item';
-    div.innerHTML = `<div>${item.date} · 남은:${item.remaining}일</div>
+    function refreshLists() {
+      const annList = document.getElementById('annList');
+      const addedSubList = document.getElementById('addedSubList');
+      annList.innerHTML = '';
+      annualOccurrences.slice().sort((a, b) => a.date.localeCompare(b.date)).forEach(item => {
+        const div = document.createElement('div'); div.className = 'item';
+        div.innerHTML = `<div>${item.date} · 남은:${item.remaining}일</div>
                       <div><button class="small" onclick="deleteAnn(${item.id})">삭제</button></div>`;
-    annList.appendChild(div);
-  });
+        annList.appendChild(div);
+      });
 
-  addedSubList.innerHTML='';
-  weekendSubHolidays.forEach((item, idx)=>{
-    const div=document.createElement('div'); div.className='item';
-    div.innerHTML = `<div>${item.date} (${item.weekday})</div>
+      addedSubList.innerHTML = '';
+      weekendSubHolidays.forEach((item, idx) => {
+        const div = document.createElement('div'); div.className = 'item';
+        div.innerHTML = `<div>${item.date} (${item.weekday})</div>
                       <div><button class="small" onclick="deleteAddedSub(${idx})">삭제</button></div>`;
-    addedSubList.appendChild(div);
-  });
+        addedSubList.appendChild(div);
+      });
 
-  const remainingSub = weekendSubHolidays.length - usedSubHolidays.length;
-  document.getElementById('remainingSub').innerText = remainingSub;
-  
-  updateDonutGauge();
-  if(firstScan != 1){
-    firstScan++;
-    return;
-  }
-  saveToSheets();
-}
+      const remainingSub = weekendSubHolidays.length - usedSubHolidays.length;
+      document.getElementById('remainingSub').innerText = remainingSub;
 
-function updateDonutGauge(){
-  const { total, remain } = getRemainAnnual();
-  const percent = total > 0 ? (remain / total) * 100 : 0;
+      updateDonutGauge();
+      if (firstScan != 1) {
+        firstScan++;
+        return;
+      }
+      saveToSheets();
+    }
 
-  // 도넛 애니메이션 (둘레: 2πr = 339.292)
-  const circumference = 339.292;
-  const offset = circumference - (percent / 100) * circumference;
-  document.querySelector('.donut-fg').style.strokeDashoffset = offset;
+    function updateDonutGauge() {
+      const { total, remain } = getRemainAnnual();
+      const percent = total > 0 ? (remain / total) * 100 : 0;
 
-  // 텍스트 갱신
-  document.getElementById('donutText').innerText = `${percent.toFixed(0)}%`;
-  document.getElementById('donutRemain').innerText = remain.toFixed(2);
-  document.getElementById('donutTotal').innerText = total.toFixed(2);
-}
+      // 도넛 애니메이션 (둘레: 2πr = 339.292)
+      const circumference = 339.292;
+      const offset = circumference - (percent / 100) * circumference;
+      document.querySelector('.donut-fg').style.strokeDashoffset = offset;
 
-function refreshUsedLists(){
-  const usedList = document.getElementById('usedList');
-  const usedSubList = document.getElementById('usedSubList');
-  usedList.innerHTML='';
-  usedSubList.innerHTML='';
-  usedHolidays.forEach((item, idx)=>{
-    const div=document.createElement('div'); div.className='item';
-    div.innerHTML=`<div>${item.date} (${item.weekday}) - ${item.amount}일</div>
+      // 텍스트 갱신
+      document.getElementById('donutText').innerText = `${percent.toFixed(0)}%`;
+      document.getElementById('donutRemain').innerText = remain.toFixed(2);
+      document.getElementById('donutTotal').innerText = total.toFixed(2);
+    }
+
+    function refreshUsedLists() {
+      const usedList = document.getElementById('usedList');
+      const usedSubList = document.getElementById('usedSubList');
+      usedList.innerHTML = '';
+      usedSubList.innerHTML = '';
+      usedHolidays.forEach((item, idx) => {
+        const div = document.createElement('div'); div.className = 'item';
+        div.innerHTML = `<div>${item.date} (${item.weekday}) - ${item.amount}일</div>
                     <div><button class="small" onclick="deleteUsedHoliday(${idx})">삭제</button></div>`;
-    usedList.appendChild(div);
-  });
-  usedSubHolidays.forEach((item, idx)=>{
-    const div=document.createElement('div'); div.className='item';
-    div.innerHTML=`<div>${item.date} (${item.weekday})</div>
+        usedList.appendChild(div);
+      });
+      usedSubHolidays.forEach((item, idx) => {
+        const div = document.createElement('div'); div.className = 'item';
+        div.innerHTML = `<div>${item.date} (${item.weekday})</div>
                     <div><button class="small" onclick="deleteUsedSub(${idx})">삭제</button></div>`;
-    usedSubList.appendChild(div);
-  });
-}
+        usedSubList.appendChild(div);
+      });
+    }
 
-function deleteAnn(id){ 
-  const idx = annualOccurrences.findIndex(a=>a.id===id); 
-  if(idx>=0){ 
-    annualOccurrences.splice(idx,1); 
-    refreshLists(); 
-  }
-}
-function deleteAddedSub(idx){ weekendSubHolidays.splice(idx,1); refreshLists(); }
-function deleteUsedHoliday(idx){ usedHolidays.splice(idx,1); refreshUsedLists(); refreshLists(); }
-function deleteUsedSub(idx){ usedSubHolidays.splice(idx,1); refreshUsedLists(); refreshLists(); }
+    function deleteAnn(id) {
+      const idx = annualOccurrences.findIndex(a => a.id === id);
+      if (idx >= 0) {
+        annualOccurrences.splice(idx, 1);
+        refreshLists();
+      }
+    }
+    function deleteAddedSub(idx) { weekendSubHolidays.splice(idx, 1); refreshLists(); }
+    function deleteUsedHoliday(idx) { usedHolidays.splice(idx, 1); refreshUsedLists(); refreshLists(); }
+    function deleteUsedSub(idx) { usedSubHolidays.splice(idx, 1); refreshUsedLists(); refreshLists(); }
 
-document.getElementById('addAnn').onclick = () => {
-  const date = document.getElementById('annDate').value;
-  const days = Number(document.getElementById('annDays').value)||0;
-  if(!date){ alert('날짜 입력'); return; }
-  if(days<=0){ alert('0.25 이상'); return; }
-  annualOccurrences.push({id: annIdCounter++, date, remaining: days});
-  refreshLists();
-};
+    document.getElementById('addAnn').onclick = () => {
+      const date = document.getElementById('annDate').value;
+      const days = Number(document.getElementById('annDays').value) || 0;
+      if (!date) { alert('날짜 입력'); return; }
+      if (days <= 0) { alert('0.25 이상'); return; }
+      annualOccurrences.push({ id: annIdCounter++, date, remaining: days });
+      refreshLists();
+    };
 
-document.getElementById('addSub').onclick = () => {
-  const dateStr = document.getElementById('SubDateADD').value;
-  if(!dateStr){ alert('날짜를 선택하세요.'); return; }
+    document.getElementById('addSub').onclick = () => {
+      const dateStr = document.getElementById('SubDateADD').value;
+      if (!dateStr) { alert('날짜를 선택하세요.'); return; }
 
-  const dateObj = new Date(dateStr);
-  const weekday = dateObj.toLocaleDateString('ko-KR',{weekday:'short'});
-  weekendSubHolidays.push({ date: dateStr, weekday });
-  refreshLists();
-}
+      const dateObj = new Date(dateStr);
+      const weekday = dateObj.toLocaleDateString('ko-KR', { weekday: 'short' });
+      weekendSubHolidays.push({ date: dateStr, weekday });
+      refreshLists();
+    }
 
-/* ========== 내보내기 기능 ========== */
-document.getElementById('exportData').onclick = () => {
-  const dataToSave = {
-    annualOccurrences,
-    weekendSubHolidays,
-    usedHolidays,
-    usedSubHolidays,
-    annIdCounter,
-  };
-  const dataStr = JSON.stringify(dataToSave, null, 2);
-  const blob = new Blob([dataStr], { type: "application/json;charset=utf-8" });
+    /* ========== 내보내기 기능 ========== */
+    document.getElementById('exportData').onclick = () => {
+      const dataToSave = {
+        annualOccurrences,
+        weekendSubHolidays,
+        usedHolidays,
+        usedSubHolidays,
+        annIdCounter,
+      };
+      const dataStr = JSON.stringify(dataToSave, null, 2);
+      const blob = new Blob([dataStr], { type: "application/json;charset=utf-8" });
 
-  try {
-    saveAs(blob, "vacation_data.json");
-  } catch (e) {
-    console.warn("FileSaver 다운로드 실패, fallback 실행", e);
-    const url = "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
-    window.open(url, "_blank");
-  }
-};
+      try {
+        saveAs(blob, "vacation_data.json");
+      } catch (e) {
+        console.warn("FileSaver 다운로드 실패, fallback 실행", e);
+        const url = "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
+        window.open(url, "_blank");
+      }
+    };
 
-/* ========== 불러오기 기능 ========== */
-document.getElementById('importData').onclick = () =>
-  document.getElementById('importFile').click();
+    /* ========== 불러오기 기능 ========== */
+    document.getElementById('importData').onclick = () =>
+      document.getElementById('importFile').click();
 
-document.getElementById('importFile').addEventListener('change', e=>{
-  const file=e.target.files[0];
-  if(!file) return;
-  const reader=new FileReader();
-  reader.onload = event=>{
-    try{
-      const imported=JSON.parse(event.target.result);
+    document.getElementById('importFile').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = event => {
+        try {
+          const imported = JSON.parse(event.target.result);
 
-      annualOccurrences.length = 0;
-      imported.annualOccurrences?.forEach(v=>annualOccurrences.push(v));
-      weekendSubHolidays.length = 0;
-      imported.weekendSubHolidays?.forEach(v=>weekendSubHolidays.push(v));
-      usedHolidays.length = 0;
-      imported.usedHolidays?.forEach(v=>usedHolidays.push(v));
-      usedSubHolidays.length = 0;
-      imported.usedSubHolidays?.forEach(v=>usedSubHolidays.push(v));
+          annualOccurrences.length = 0;
+          imported.annualOccurrences ?.forEach(v => annualOccurrences.push(v));
+          weekendSubHolidays.length = 0;
+          imported.weekendSubHolidays ?.forEach(v => weekendSubHolidays.push(v));
+          usedHolidays.length = 0;
+          imported.usedHolidays ?.forEach(v => usedHolidays.push(v));
+          usedSubHolidays.length = 0;
+          imported.usedSubHolidays ?.forEach(v => usedSubHolidays.push(v));
 
-      annIdCounter = imported.annIdCounter ?? 1;
+          annIdCounter = imported.annIdCounter ?? 1;
 
+          refreshUsedLists();
+          refreshLists();
+          alert("불러오기 완료!");
+        } catch (err) {
+          alert('파일 읽기 오류: ' + err);
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    });
+
+    window.onload = function () {
+      const buttons = document.querySelectorAll('.AnnualTypeBtn button');
+      const lists = [
+        document.getElementById('AnnualListView'),
+        document.getElementById('SubListView'),
+        document.getElementById('UsedAnnualListView'),
+        document.getElementById('UsedSubListView')
+      ];
+
+      lists.forEach(list => list.classList.remove('active'));
+      document.getElementById('AnnualListView').classList.add('active');
+      document.getElementById('AnnualListBtn').classList.add('active');
+
+      buttons.forEach(btn => {
+        btn.addEventListener('click', function () {
+          lists.forEach(list => list.classList.remove('active'));
+          const targetId = this.id.replace('Btn', 'View');
+          const targetDiv = document.getElementById(targetId);
+          if (targetDiv) targetDiv.classList.add('active');
+          buttons.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+        });
+      });
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const calendarEl = document.getElementById('calendar');
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth', height: 'auto',
+        dateClick: info => {
+          currentDate = info.dateStr;
+          currentWeekday = info.date.toLocaleDateString('ko-KR', { weekday: 'short' });
+          const dayNum = info.date.getDay();
+
+          if (dayNum === 0 || dayNum === 6) { // 주말
+            const message = `대체공휴일로 추가하시겠습니까?\n\n${currentDate} (${currentWeekday})`;
+
+            if (confirm(message)) {
+              weekendSubHolidays.push({
+                date: currentDate,
+                weekday: currentWeekday
+              });
+
+              refreshLists();
+              alert("대체공휴일이 추가되었습니다 ✓");
+            }
+          } else {
+            document.getElementById('holidayModal').style.display = 'flex';
+          }
+        },
+        dayMaxEvents: true
+      });
+      calendar.render();
+      document.getElementById('goBtn').addEventListener('click', () => {
+        const dateInput = document.getElementById('jumpDate').value;
+        if (dateInput) {
+          calendar.gotoDate(dateInput);
+        }
+      });
+    });
+
+    // 모달 이벤트
+    document.getElementById('modalAnnual').onclick = () => {
+      document.getElementById('holidayModal').style.display = 'none';
+      const annualModal = document.getElementById('holidayModal_Annual');
+      annualModal.style.display = 'flex';
+
+      const addHoliday = (amount) => {
+        usedHolidays.push({ date: currentDate, weekday: currentWeekday, amount });
+        refreshUsedLists();
+        refreshLists();
+        annualModal.style.display = 'none';
+      }
+
+      document.getElementById('modalFull').onclick = () => addHoliday(1);
+      document.getElementById('modalHalf').onclick = () => addHoliday(0.5);
+      document.getElementById('modalQuarter').onclick = () => addHoliday(0.25);
+      document.getElementById('modalAnnualCancel').onclick = () => annualModal.style.display = 'none';
+    }
+
+    document.getElementById('modalSub').onclick = () => {
+      usedSubHolidays.push({ date: currentDate, weekday: currentWeekday });
       refreshUsedLists();
       refreshLists();
-      alert("불러오기 완료!");
-    }catch(err){
-      alert('파일 읽기 오류: '+err);
-    }
-  };
-  reader.readAsText(file);
-  e.target.value='';
-});
+      document.getElementById('holidayModal').style.display = 'none';
+    };
 
-window.onload = function() {
-  const buttons = document.querySelectorAll('.AnnualTypeBtn button');
-  const lists = [
-    document.getElementById('AnnualListView'),
-    document.getElementById('SubListView'),
-    document.getElementById('UsedAnnualListView'),
-    document.getElementById('UsedSubListView')
-  ];
+    document.getElementById('modalCancel').onclick = () => document.getElementById('holidayModal').style.display = 'none';
 
-  lists.forEach(list => list.classList.remove('active'));
-  document.getElementById('AnnualListView').classList.add('active');
-  document.getElementById('AnnualListBtn').classList.add('active');
-
-  buttons.forEach(btn => {
-    btn.addEventListener('click', function() {
-      lists.forEach(list => list.classList.remove('active'));
-      const targetId = this.id.replace('Btn', 'View');
-      const targetDiv = document.getElementById(targetId);
-      if(targetDiv) targetDiv.classList.add('active');
-      buttons.forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
+    // === 오늘 날짜를 모든 date input에 기본값으로 세팅 ===
+    document.querySelectorAll('input[type="date"]').forEach(el => {
+      el.value = new Date().toISOString().split('T')[0];
     });
-  });
-};
-
-document.addEventListener('DOMContentLoaded', ()=>{
-  const calendarEl=document.getElementById('calendar');
-  const calendar=new FullCalendar.Calendar(calendarEl,{
-    initialView:'dayGridMonth', height:'auto',
-    dateClick: info => {
-      currentDate = info.dateStr;
-      currentWeekday = info.date.toLocaleDateString('ko-KR', { weekday: 'short' });
-      const dayNum = info.date.getDay();
-
-      if (dayNum === 0 || dayNum === 6) { // 주말
-        const message = `대체공휴일로 추가하시겠습니까?\n\n${currentDate} (${currentWeekday})`;
-        
-        if (confirm(message)) {
-          weekendSubHolidays.push({
-            date: currentDate,
-            weekday: currentWeekday
-          });
-          
-          refreshLists();
-          alert("대체공휴일이 추가되었습니다 ✓");
-        }
-      } else {
-        document.getElementById('holidayModal').style.display = 'flex';
-      }
-    },
-    dayMaxEvents:true
-  });
-  calendar.render();
-  document.getElementById('goBtn').addEventListener('click', () => {
-    const dateInput = document.getElementById('jumpDate').value;
-    if(dateInput){
-      calendar.gotoDate(dateInput);
-    }
-  });
-});
-
-// 모달 이벤트
-document.getElementById('modalAnnual').onclick = () => {
-  document.getElementById('holidayModal').style.display = 'none';
-  const annualModal = document.getElementById('holidayModal_Annual');
-  annualModal.style.display = 'flex';
-
-  const addHoliday = (amount) => {
-    usedHolidays.push({date: currentDate, weekday: currentWeekday, amount});
-    refreshUsedLists();
-    refreshLists();
-    annualModal.style.display = 'none';
-  }
-
-  document.getElementById('modalFull').onclick = () => addHoliday(1);
-  document.getElementById('modalHalf').onclick = () => addHoliday(0.5);
-  document.getElementById('modalQuarter').onclick = () => addHoliday(0.25);
-  document.getElementById('modalAnnualCancel').onclick = () => annualModal.style.display = 'none';
-}
-
-document.getElementById('modalSub').onclick = ()=>{
-  usedSubHolidays.push({date: currentDate, weekday: currentWeekday});
-  refreshUsedLists();
-  refreshLists();
-  document.getElementById('holidayModal').style.display='none';
-};
-
-document.getElementById('modalCancel').onclick = ()=>document.getElementById('holidayModal').style.display='none';
-
-// === 오늘 날짜를 모든 date input에 기본값으로 세팅 ===
-document.querySelectorAll('input[type="date"]').forEach(el => {
-  el.value = new Date().toISOString().split('T')[0];
-});
-</script>
+  </script>
 </body>
+
 </html>
