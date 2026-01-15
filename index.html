@@ -364,9 +364,18 @@
     }
 
     @media (max-width: 480px) {
+      #left-top-input-field {
+        align-items: flex-start;
+        /* 윗 정렬 */
+        display: flex;
+        flex-direction: row;
+        gap: 24px;
+        width: 100%;
+        justify-content: center;
+      }
       #AnnualInput {
         font-size: 13px;
-        width: 45%;
+        width: 35%;
         display: flex;
         flex-direction: column;
         gap: 5px;
