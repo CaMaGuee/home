@@ -363,9 +363,7 @@
       justify-content: center;
     }
 
-    @media (max-width: 480px) {
-      
-    }
+    @media (max-width: 480px) {}
 
     input[type="date"],
     input[type="number"] {
@@ -530,6 +528,17 @@
       </div>
     </nav>
 
+    <div id="installBtn-body" style="z-index: 9999;">
+      <button id="installBtn" style="position:fixed; right:10px; bottom:10px; background: none; border: none; padding: 0; outline: none; color: white; font-size: 14px; font-weight: 500;">앱 설치</button>
+      <div id="iosPopup" style="display:none; position:fixed; inset:0; background:#0008;">
+        <div style="background:#1f274f; color:white; padding:20px; border-radius:8px; width:260px; margin:40% auto; text-align:center; font-weight: 14px;">
+          <p>Safari 하단의</p>
+          <p><b>"···" - "공유 버튼"</b>을 누른 후</p>
+          <p><b>“더보기" - "홈 화면에 추가”</b>를 선택해주세요.</p>
+          <button onclick="this.parentElement.parentElement.style.display='none'" style="position:fixed; background: none; border: none; padding: 0; outline: none; color: white; font-size: 14px; font-weight: 500;">확인</button>
+        </div>
+      </div>
+    </div>
 
     <div class="notice-bar">
       <div class="notice-track">
@@ -684,6 +693,51 @@
     </div>
   </div>
   </div>
+  <script>
+    function isIOS() {
+      return /iphone|ipad|iod/i.test(navigator.userAgent);
+    }
+
+    function isStandalone() {
+      return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+    }
+
+    let deferredPrompt = null;
+
+    if (isStandalone()) {
+      document.getElementById("installBtn-body").style.display = "none";
+    } else {
+      document.getElementById("installBtn-body").style.display = "block";
+    }
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault(); //자동 팝업 차단
+      deferredPrompt = e; //나중에 사용
+    })
+
+    document.getElementById("installBtn").addEventListener("pointerup", async () => {
+
+      //이미 설치됨
+      if (isStandalone()) {
+        return;
+      }
+
+      if (isIOS()) {
+        document.getElementById("iosPopup").style.display = "block";
+        return;
+      } else {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+
+          const { outcome } = await deferredPrompt.userChoice;
+          deferredPrompt = null;
+          return;
+        }
+      }
+
+      alert("다운로드 실패 직접 다운로드 해주세요.");
+    })
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
   <script>
