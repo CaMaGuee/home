@@ -63,6 +63,14 @@
       border-radius: 7px;
     }
 
+    #left-top-save-load-btn {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      background: #1f274f;
+      touch-action: none;
+    }
+
     /* ===== 버튼 ===== */
     button {
       padding: 8px 14px;
@@ -566,7 +574,6 @@
                 <button id="addSub" class="primary">추가</button>
               </div>
             </div>
-            <div id="left-top-btn" style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;"></div>
             <div id="left-top-save-load-btn">
               <button id="exportData" class="DataBtn small">내보내기</button>
               <input type="file" id="importFile" style="display:none;">
